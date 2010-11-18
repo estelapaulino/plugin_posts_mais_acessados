@@ -27,26 +27,30 @@ class PostsMaisAcessados extends WP_Widget {
 	{	global $wpdb;
 		extract($args);
 		$title = apply_filters('widget_title', empty($instance['title']) ? 'Posts Mais Acessados' : $instance['title']);
-                $url_pagina = empty($instance['url_pagina']) ? 'url_pagina' : $instance['url_pagina'];
-		$maxPages = empty($instance['maxPages']) ? 5 : $instance['maxPages'];    
-                echo $before_widget;
-		echo $before_title . $title . $after_title;
+                $maxPages = empty($instance['maxPages']) ? 5 : $instance['maxPages'];    
+                
                 ?>
-                <ul class="mundo-digital hl">
+                <ul id="blog-post-list" class="activity-list item-list">
 			<?php $resultado = $wpdb->get_results("	SELECT *, DATE_FORMAT(post_date, '%d/%m/%Y') as data
 								FROM ".$wpdb->prefix."postsmaisacessados
 								ORDER BY pageviews DESC LIMIT $maxPages", OBJECT); ?>
 				
 			<?php foreach($resultado as $result) : the_post($result);?>
 			   <li>
-				<h3>    
-					<a href="<?php echo $result->guid; ?>" ><?php echo $result->post_title; ?></a>
-					<span class="date">	<?php the_author_meta('nickname', $result->post_author); ?></span>
-				</h3>
-				<p>   		
+				<div class="activity-content" style="margin: 0">
+				<div class="activity-header">   
+					<a href="<?php echo $result->guid; ?>" >
+						<?php echo $result->post_title; ?>
+					</a>
+					<span class="date">
+						<?php the_author_meta('nickname', $result->post_author); ?>
+					</span>
+				</div>
+				<div class="activity-inner">   		
 					<span class="date"><?php echo $result->data; ?></span>
-					<?php limit_chars($result->post_content, 150); ?>
-   				</p>
+					<?php limit_chars($result->post_content, 140); ?>
+   				</div>
+				</div>
 			   </li>
 			<?php endforeach; ?>
 		</ul>	 
