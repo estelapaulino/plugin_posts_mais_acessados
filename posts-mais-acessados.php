@@ -22,7 +22,7 @@ class PostsMaisAcessados extends WP_Widget {
 		parent::WP_Widget('PostsMaisAcessados', __('Posts Mais Acessados'), $widget_args);
                 
 	}
-
+	
 	function widget($args, $instance)
 	{	global $wpdb;
 		extract($args);
@@ -38,18 +38,37 @@ class PostsMaisAcessados extends WP_Widget {
 			<?php foreach($resultado as $result) : the_post($result);?>
 			   <li>
 				<div class="activity-content" style="margin: 0">
-				<div class="activity-header">   
-					<a href="<?php echo $result->guid; ?>" >
-						<?php echo $result->post_title; ?>
-					</a>
-					<span class="date">
-						<?php the_author_meta('nickname', $result->post_author); ?>
-					</span>
-				</div>
-				<div class="activity-inner">   		
-					<span class="date"><?php echo $result->data; ?></span>
-					<?php limit_chars($result->post_content, 140); ?>
-   				</div>
+					<div class="activity-header">   
+						<a href="<?php echo $result->guid; ?>" >
+							<?php echo $result->post_title; ?>
+						</a>
+						<span class="date">
+							<?php the_author_meta('nickname', $result->post_author); ?>
+						</span>
+					</div>
+					<div class="activity-inner">   		
+						<span class="date"><?php echo $result->data; ?></span>
+						<!--<?php limit_chars($result->post_content, 140); ?>-->
+   					</div>
+					<div>
+					<?php   							
+						$conteudo=$result->post_content;
+						$cont_tag= (int)substr_count($conteudo, '[caption');
+						if ($cont_tag<>0):
+							$cont=1;
+							while ($cont<=$cont_tag):
+						   		$inicio_tag=strpos($conteudo, '[caption');
+								$fim_tag=strpos($conteudo, ']');	
+								$ftag=(substr($conteudo, $fim_tag, 1));
+						   		if ($ftag==']'):
+						      			$tag=(substr($conteudo, $inicio_tag, $fim_tag-$inicio_tag+1));					      			$conteudo=(str_replace($tag, "", $conteudo));					  		
+						   		endif;
+								$cont++;
+							endwhile;
+						endif;	
+						limit_chars($conteudo, 140);
+					?>
+					</div>
 				</div>
 			   </li>
 			<?php endforeach; ?>
